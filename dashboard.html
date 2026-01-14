@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard | KFS AI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. PALETTE (ROYAL BURGUNDY) --- */
+        :root {
+            --bg-dark: #0f0202;
+            --bg-panel: #1a0505;
+            --bg-card: #2d0a0a;
+            --gold: #bf9b30;
+            --gold-hover: #d4af37;
+            --text-main: #f2e8d5;
+            --text-muted: #d1c4b0;
+            --success: #1c8a43;
+            --border-gold: 1px solid rgba(191, 155, 48, 0.3);
+            
+            --font-head: 'Cinzel Decorative', cursive;
+            --font-body: 'Lato', sans-serif;
+            --sidebar-width: 280px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Noise Texture */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04; pointer-events: none; z-index: 9999; mix-blend-mode: soft-light;
+        }
+
+        /* --- 2. SIDEBAR --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--gold);
+            height: 100vh; position: fixed; top: 0; left: 0;
+            display: flex; flex-direction: column; padding: 2rem;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 3rem;
+            text-decoration: none; border-bottom: 1px solid rgba(191, 155, 48, 0.1); padding-bottom: 20px;
+        }
+        .brand i { font-size: 2rem; color: var(--gold); }
+        .brand span { font-family: var(--font-head); font-size: 1.1rem; color: #fff; line-height: 1.2; }
+
+        .prof-profile {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 3rem;
+        }
+        .avatar {
+            width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--gold);
+            background: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=200&auto=format&fit=crop') center/cover;
+        }
+        .prof-info h4 { font-size: 0.95rem; margin-bottom: 3px; color: #fff; }
+        .prof-info p { font-size: 0.75rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+
+        .menu { list-style: none; }
+        .menu li { margin-bottom: 10px; }
+        .menu a {
+            display: flex; align-items: center; gap: 15px;
+            padding: 12px 15px; color: var(--text-muted); text-decoration: none;
+            border-radius: 5px; transition: 0.3s; font-size: 0.95rem;
+        }
+        .menu a:hover, .menu a.active {
+            background: rgba(191, 155, 48, 0.1); color: var(--gold); border-left: 3px solid var(--gold);
+        }
+
+        .logout-btn { margin-top: auto; color: #d9534f !important; cursor: pointer; }
+
+        /* --- 3. MAIN CONTENT --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1; padding: 3rem;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        /* Top Bar: Selectors */
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;
+            background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: var(--border-gold);
+        }
+        .greeting h1 { font-size: 1.8rem; color: var(--gold); font-family: var(--font-head); margin-bottom: 5px; }
+        .greeting p { font-size: 0.9rem; color: var(--text-muted); }
+
+        .academic-selector { display: flex; gap: 20px; }
+        .custom-select {
+            background: var(--bg-dark); border: 1px solid var(--gold); color: #fff;
+            padding: 10px 20px; border-radius: 4px; font-family: var(--font-body); cursor: pointer;
+        }
+
+        /* --- 4. STATS ROW --- */
+        .stats-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 4rem;
+        }
+        .stat-card {
+            background: var(--bg-card); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center; transition: 0.3s;
+        }
+        .stat-card:hover { border-color: var(--gold); transform: translateY(-5px); }
+        .stat-info h3 { font-size: 2rem; color: #fff; margin-bottom: 5px; font-family: var(--font-head); }
+        .stat-info p { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-icon { font-size: 2.5rem; color: rgba(191, 155, 48, 0.2); }
+
+        /* --- 5. COURSES MANAGER (The Core) --- */
+        .section-header { margin-bottom: 2rem; display: flex; align-items: center; gap: 15px; }
+        .section-header h2 { font-size: 1.5rem; color: #fff; border-left: 4px solid var(--gold); padding-left: 15px; }
+
+        .courses-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+
+        /* Complex Course Card */
+        .course-manager-card {
+            background: var(--bg-panel); border: var(--border-gold); border-radius: 8px; overflow: hidden;
+            display: grid; grid-template-columns: 1.5fr 3fr; /* Split: Info vs Actions */
+        }
+
+        /* Left: Info */
+        .course-info {
+            padding: 2rem; background: rgba(191, 155, 48, 0.05);
+            display: flex; flex-direction: column; justify-content: center;
+            border-right: 1px solid rgba(191, 155, 48, 0.1);
+        }
+        .course-code { font-size: 0.8rem; color: var(--gold); letter-spacing: 2px; margin-bottom: 10px; display: block; }
+        .course-title { font-size: 1.5rem; color: #fff; font-family: var(--font-head); margin-bottom: 15px; line-height: 1.2; }
+        .student-count { font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 10px; }
+        
+        .progress-wrapper { margin-top: 2rem; }
+        .progress-label { font-size: 0.8rem; display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .progress-track { width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--gold); width: 0%; transition: 1s ease-out; }
+
+        /* Right: Actions */
+        .course-actions { padding: 2rem; }
+        .action-group { margin-bottom: 1.5rem; }
+        .group-title { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        
+        .task-row {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.02); padding: 10px 15px; margin-bottom: 8px; border-radius: 4px;
+            transition: 0.2s;
+        }
+        .task-row:hover { background: rgba(255,255,255,0.05); }
+        .task-name { font-size: 0.9rem; color: #e0e0e0; display: flex; align-items: center; gap: 10px; }
+        .task-name i { color: var(--gold); width: 20px; }
+
+        .btn-action {
+            padding: 5px 15px; font-size: 0.75rem; border-radius: 3px; cursor: pointer; text-transform: uppercase; font-weight: bold; border: none; transition: 0.3s;
+        }
+        .btn-download { background: transparent; border: 1px solid #555; color: #aaa; }
+        .btn-download:hover { border-color: #fff; color: #fff; }
+        
+        .btn-upload { background: var(--gold); color: #0f0202; }
+        .btn-upload:hover { background: var(--gold-hover); }
+        
+        .btn-done { background: transparent; color: var(--success); cursor: default; }
+
+        /* --- 6. TOAST NOTIFICATION --- */
+        .toast-container {
+            position: fixed; bottom: 30px; right: 30px; z-index: 2000;
+        }
+        .toast {
+            background: var(--bg-card); border-left: 4px solid var(--gold); color: #fff;
+            padding: 15px 25px; margin-top: 10px; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 15px; transform: translateX(100%); transition: 0.5s;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast i { color: var(--success); }
+
+        /* Hidden File Input */
+        .file-input { display: none; }
+
+        @media (max-width: 1024px) {
+            .course-manager-card { grid-template-columns: 1fr; }
+            .course-info { border-right: none; border-bottom: 1px solid rgba(191, 155, 48, 0.1); }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <a href="index.html" class="brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>KFS FACULTY<br>PORTAL</span>
+        </a>
+
+        <div class="prof-profile">
+            <div class="avatar"></div>
+            <div class="prof-info">
+                <h4>Dr. Sarah El-Masry</h4>
+                <p>Dept. of AI</p>
+            </div>
+        </div>
+
+        <ul class="menu">
+            <li><a href="#" class="active"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-chalkboard-user"></i> <span>My Courses</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-file-arrow-up"></i> <span>Uploads</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-chart-bar"></i> <span>Reports</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-envelope"></i> <span>Messages</span> <span style="margin-left:auto; background:var(--gold); color:#000; padding:2px 6px; font-size:0.7rem; border-radius:3px;">3</span></a></li>
+            <li><a href="index.html" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> <span>Log Out</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        
+        <div class="top-bar">
+            <div class="greeting">
+                <h1>Academic Overview</h1>
+                <p>Manage your curriculum, assessments, and reports.</p>
+            </div>
+            <div class="academic-selector">
+                <select class="custom-select">
+                    <option>2025 - 2026</option>
+                    <option>2024 - 2025</option>
+                </select>
+                <select class="custom-select" onchange="filterCourses()">
+                    <option>Second Semester (Spring)</option>
+                    <option>First Semester (Fall)</option>
+                    <option>Summer Course</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>3</h3>
+                    <p>Active Courses</p>
+                </div>
+                <i class="fa-solid fa-book stat-icon"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>450</h3>
+                    <p>Total Students</p>
+                </div>
+                <i class="fa-solid fa-users stat-icon"></i>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>85%</h3>
+                    <p>Completion Rate</p>
+                </div>
+                <i class="fa-solid fa-chart-line stat-icon"></i>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>Assigned Courses</h2>
+        </div>
+
+        <div class="courses-grid">
+            
+            <div class="course-manager-card">
+                <div class="course-info">
+                    <span class="course-code">CS-401</span>
+                    <h3 class="course-title">Machine Learning</h3>
+                    <div class="student-count">
+                        <i class="fa-solid fa-user-graduate"></i> 120 Students Enrolled
+                    </div>
+                    <div class="progress-wrapper">
+                        <div class="progress-label">
+                            <span>Completion Status</span>
+                            <span id="prog-txt-1">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="prog-bar-1"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-actions">
+                    <div class="action-group">
+                        <div class="group-title">Course Specifications</div>
+                        <div class="task-row">
+                            <div class="task-name"><i class="fa-solid fa-file-word"></i> Course Specs Template</div>
+                            <button class="btn-action btn-download" onclick="downloadFile('Specs_Template.docx')">Download</button>
+                        </div>
+                        <div class="task-row">
+                            <div class="task-name"><i class="fa-solid fa-upload"></i> Upload Specs (Filled)</div>
+                            <label class="btn-action btn-upload">
+                                Upload <input type="file" class="file-input" onchange="handleUpload(this, 1)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="action-group">
+                        <div class="group-title">Exams & Assessments</div>
+                        <div class="task-row">
+                            <div class="task-name"><i class="fa-solid fa-bolt"></i> Quiz 1</div>
+                            <label class="btn-action btn-upload">
+                                Upload <input type="file" class="file-input" onchange="handleUpload(this, 1)">
+                            </label>
+                        </div>
+                        <div class="task-row">
+                            <div class="task-name"><i class="fa-solid fa-file-shield"></i> Final Exam Paper</div>
+                            <label class="btn-action btn-upload">
+                                Upload <input type="file" class="file-input" onchange="handleUpload(this, 1)">
+                            </label>
+                        </div>
+                        <div class="task-row">
+                            <div class="task-name"><i class="fa-solid fa-key"></i> Model Answer Key</div>
+                            <label class="btn-action btn-upload">
+                                Upload <input type="file" class="file-input" onchange="handleUpload(this, 1)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="course-manager-card">
+                <div class="course-info">
+                    <span class="course-code">AI-305</span>
+                    <h3 class="course-title">Deep Learning Architectures</h3>
+                    <div class="student-count">
+                        <i class="fa-solid fa-user-graduate"></i> 85 Students Enrolled
+                    </div>
+                    <div class="progress-wrapper">
+                        <div class="progress-label">
+                            <span>Completion Status</span>
+                            <span id="prog-txt-2">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="prog-bar-2"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="course-actions">
+                    <div class="action-group">
+                        <div class="group-title">Course Specifications</div>
+                        <div class="task-row">
+                            <div class="task-name"><i class="fa-solid fa-upload"></i> Upload Specs (Filled)</div>
+                            <label class="btn-action btn-upload">
+                                Upload <input type="file" class="file-input" onchange="handleUpload(this, 2)">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="action-group">
+                        <div class="group-title">Reports</div>
+                        <div class="task-row">
+                            <div class="task-name"><i class="fa-solid fa-chart-pie"></i> Final Exam Report</div>
+                            <label class="btn-action btn-upload">
+                                Upload <input type="file" class="file-input" onchange="handleUpload(this, 2)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="toast-container" id="toastBox"></div>
+
+    <script>
+        // --- 1. Upload Simulation Logic ---
+        function handleUpload(input, courseId) {
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                const label = input.parentElement;
+                
+                // 1. Change Button State
+                label.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+                label.className = 'btn-action btn-done';
+                label.style.pointerEvents = 'none'; // Disable clicking again
+
+                // 2. Update Progress Bar
+                updateProgress(courseId);
+
+                // 3. Show Notification
+                showToast(`Successfully uploaded: ${fileName}`);
+            }
+        }
+
+        // --- 2. Progress Bar Logic ---
+        const progressState = { 1: 0, 2: 0 }; // Stores current progress for each course
+
+        function updateProgress(id) {
+            // Increment progress (Simulated: each upload adds 25%)
+            progressState[id] += 25;
+            if (progressState[id] > 100) progressState[id] = 100;
+
+            // Update UI
+            document.getElementById(`prog-bar-${id}`).style.width = `${progressState[id]}%`;
+            document.getElementById(`prog-txt-${id}`).innerText = `${progressState[id]}%`;
+        }
+
+        // --- 3. Toast Notification ---
+        function showToast(msg) {
+            const box = document.getElementById('toastBox');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`;
+            
+            box.appendChild(toast);
+            
+            // Trigger Animation
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // --- 4. Simulation: Download ---
+        function downloadFile(name) {
+            showToast(`Downloading template: ${name}`);
+        }
+
+        // --- 5. Simulation: Filter Change ---
+        function filterCourses() {
+            // Just a visual effect to simulate loading new data
+            const grid = document.querySelector('.courses-grid');
+            grid.style.opacity = '0.5';
+            setTimeout(() => {
+                grid.style.opacity = '1';
+                showToast('Term Updated. Showing courses...');
+            }, 500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal | KFS AI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Cinzel+Decorative:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. ROYAL THEME (Burgundy & Gold) --- */
+        :root {
+            --bg-dark: #0f0202;
+            --bg-panel: #1a0505;
+            --bg-card: #2b0808;
+            --gold: #bf9b30;
+            --gold-glow: #e6c88b;
+            --text-main: #f2e8d5;
+            --text-muted: #d1c4b0;
+            --danger: #8a1c1c;
+            --success: #1c8a43;
+            
+            --font-head: 'Cinzel Decorative', cursive;
+            --font-body: 'Lato', sans-serif;
+            --sidebar-width: 280px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- 2. SIDEBAR (Fixed) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--gold);
+            height: 100vh; position: fixed; top: 0; left: 0;
+            display: flex; flex-direction: column; padding: 2rem;
+            z-index: 100;
+        }
+        .brand {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 3rem; text-decoration: none;
+        }
+        .brand i { font-size: 2rem; color: var(--gold); }
+        .brand span { font-family: var(--font-head); font-size: 1.1rem; color: #fff; line-height: 1.2; }
+
+        .student-profile {
+            text-align: center; margin-bottom: 3rem; border-bottom: 1px solid rgba(191, 155, 48, 0.2); padding-bottom: 1.5rem;
+        }
+        .avatar {
+            width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold);
+            margin: 0 auto 10px; background: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop') center/cover;
+        }
+        .student-name { color: #fff; font-size: 1rem; margin-bottom: 5px; }
+        .student-id { color: var(--gold); font-size: 0.8rem; letter-spacing: 1px; }
+
+        .menu { list-style: none; }
+        .menu li { margin-bottom: 10px; }
+        .menu a {
+            display: flex; align-items: center; gap: 15px; padding: 12px 15px;
+            color: var(--text-muted); text-decoration: none; border-radius: 5px; transition: 0.3s;
+        }
+        .menu a.active, .menu a:hover {
+            background: rgba(191, 155, 48, 0.1); color: var(--gold); border-left: 3px solid var(--gold);
+        }
+
+        /* --- 3. MAIN AREA --- */
+        .main-content {
+            margin-left: var(--sidebar-width); flex: 1; padding: 3rem;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .header-dash {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;
+        }
+        .header-dash h1 { font-size: 2rem; color: var(--gold); font-family: var(--font-head); }
+
+        /* Stats Strip */
+        .stats-strip {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 4rem;
+        }
+        .stat-box {
+            background: var(--bg-card); border: 1px solid rgba(191, 155, 48, 0.3);
+            padding: 1.5rem; border-radius: 8px; position: relative;
+        }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 2.5rem; color: #fff; font-family: var(--font-head); margin-top: 5px; }
+        .stat-icon { position: absolute; top: 20px; right: 20px; font-size: 2rem; color: rgba(191, 155, 48, 0.1); }
+
+        /* --- 4. COURSES GRID (The Core) --- */
+        .section-title { font-size: 1.5rem; color: #fff; margin-bottom: 2rem; border-left: 4px solid var(--gold); padding-left: 15px; }
+        
+        .courses-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem;
+        }
+
+        .course-card {
+            background: var(--bg-card); border: 1px solid rgba(191, 155, 48, 0.1);
+            border-radius: 10px; overflow: hidden; transition: 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .course-card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .course-header {
+            background: rgba(191, 155, 48, 0.1); padding: 1.5rem; border-bottom: 1px solid rgba(191, 155, 48, 0.1);
+        }
+        .course-code { font-size: 0.75rem; color: var(--gold); letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .course-title { font-size: 1.3rem; color: #fff; font-family: var(--font-head); }
+        .prof-name { font-size: 0.9rem; color: var(--text-muted); margin-top: 5px; font-style: italic; }
+
+        .course-body { padding: 1.5rem; flex: 1; }
+        
+        .material-section { margin-bottom: 2rem; }
+        .material-title { font-size: 0.85rem; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .material-link {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px; background: rgba(255,255,255,0.03); border-radius: 5px;
+            color: var(--text-muted); text-decoration: none; font-size: 0.9rem; margin-bottom: 8px; transition: 0.2s;
+        }
+        .material-link:hover { background: rgba(255,255,255,0.08); color: var(--gold); }
+
+        /* --- 5. QUIZ SECTION (Dynamic) --- */
+        .quiz-zone {
+            padding: 1.5rem; border-top: 1px solid rgba(191, 155, 48, 0.2);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        /* Status: No Quiz */
+        .no-quiz { text-align: center; color: #555; font-size: 0.9rem; font-style: italic; padding: 10px; }
+
+        /* Status: Active Quiz */
+        .active-quiz {
+            border: 1px solid var(--gold); background: rgba(191, 155, 48, 0.05);
+            padding: 15px; border-radius: 5px; text-align: center;
+            animation: pulseBorder 2s infinite;
+        }
+        @keyframes pulseBorder { 0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(197, 160, 89, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); } }
+
+        .quiz-title { color: var(--gold); font-weight: bold; font-size: 1rem; margin-bottom: 5px; }
+        .timer-box { 
+            font-family: 'Courier New', monospace; font-size: 1.5rem; color: #fff; 
+            margin: 10px 0; letter-spacing: 2px;
+        }
+        .btn-start-quiz {
+            background: var(--gold); color: #0f0202; border: none; padding: 8px 20px;
+            font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            width: 100%; border-radius: 3px; transition: 0.3s;
+        }
+        .btn-start-quiz:hover { background: #fff; }
+
+        /* --- 6. NOTIFICATION BELL --- */
+        .notif-bell {
+            position: relative; cursor: pointer; color: var(--text-muted); font-size: 1.2rem;
+        }
+        .notif-dot {
+            position: absolute; top: -5px; right: -5px; width: 10px; height: 10px;
+            background: red; border-radius: 50%; display: none;
+        }
+        .notif-dot.active { display: block; }
+
+        @media (max-width: 900px) {
+            .sidebar { width: 70px; padding: 1rem 10px; }
+            .brand span, .student-profile, .menu a span { display: none; }
+            .menu a { justify-content: center; }
+            .main-content { margin-left: 70px; width: calc(100% - 70px); padding: 1.5rem; }
+            .stats-strip { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <a href="#" class="brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>KFS AI<br>SCHOLAR</span>
+        </a>
+
+        <div class="student-profile">
+            <div class="avatar"></div>
+            <div class="student-name">Ahmed Ali</div>
+            <div class="student-id">ID: 20260155</div>
+        </div>
+
+        <ul class="menu">
+            <li><a href="#" class="active"><i class="fa-solid fa-book"></i> <span>My Courses</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-chart-pie"></i> <span>Grades & GPA</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-calendar-days"></i> <span>Schedule</span></a></li>
+            <li><a href="#"><i class="fa-solid fa-envelope"></i> <span>Inbox</span></a></li>
+            <li><a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        
+        <div class="header-dash">
+            <h1>Academic Dashboard</h1>
+            <div class="notif-bell" id="bell">
+                <i class="fa-solid fa-bell"></i>
+                <div class="notif-dot" id="notifDot"></div>
+            </div>
+        </div>
+
+        <div class="stats-strip">
+            <div class="stat-box">
+                <div class="stat-label">Cumulative GPA</div>
+                <div class="stat-value">3.85</div>
+                <i class="fa-solid fa-star stat-icon"></i>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Credit Hours</div>
+                <div class="stat-value">18 <span style="font-size:1rem; color:#888;">/ 132</span></div>
+                <i class="fa-solid fa-clock stat-icon"></i>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Current Courses</div>
+                <div class="stat-value">6</div>
+                <i class="fa-solid fa-book-open stat-icon"></i>
+            </div>
+        </div>
+
+        <div class="section-title">Spring 2026 Semester</div>
+        
+        <div class="courses-grid" id="coursesContainer">
+            </div>
+
+    </main>
+
+    <script>
+        /* بيانات المواد (Mock Data)
+           هنا نحاكي قاعدة البيانات. لاحظ أن مادة "Machine Learning" 
+           لديها خاصية quizActive: true 
+        */
+        const courses = [
+            {
+                code: "CS-401",
+                title: "Machine Learning",
+                prof: "Dr. Sarah El-Masry",
+                quizActive: true, // هنا الدكتور قرر يعمل كويز
+                quizTime: 600, // 10 minutes in seconds
+                materials: [
+                    { name: "Lecture 1: Intro to NN", type: "pdf" },
+                    { name: "Week 2: Backpropagation", type: "video" }
+                ]
+            },
+            {
+                code: "AI-305",
+                title: "Computer Vision",
+                prof: "Dr. Ahmed Hassan",
+                quizActive: false,
+                materials: [
+                    { name: "Lecture 5: CNNs", type: "pdf" }
+                ]
+            },
+            {
+                code: "ETH-202",
+                title: "AI Ethics & Law",
+                prof: "Dr. James Sterling",
+                quizActive: false,
+                materials: [
+                    { name: "Case Study: Bias", type: "pdf" },
+                    { name: "Reading Material", type: "doc" }
+                ]
+            }
+        ];
+
+        // 1. Function to Render Courses
+        function renderCourses() {
+            const container = document.getElementById('coursesContainer');
+            const notifDot = document.getElementById('notifDot');
+            let activeQuizCount = 0;
+
+            courses.forEach((course, index) => {
+                // Determine icon based on file type
+                const getIcon = (type) => type === 'video' ? 'fa-video' : 'fa-file-pdf';
+
+                // Generate Materials HTML
+                const materialsHTML = course.materials.map(mat => `
+                    <a href="#" class="material-link">
+                        <span><i class="fa-solid ${getIcon(mat.type)}"></i> ${mat.name}</span>
+                        <i class="fa-solid fa-download"></i>
+                    </a>
+                `).join('');
+
+                // Generate Quiz Section HTML
+                let quizHTML = '';
+                if (course.quizActive) {
+                    activeQuizCount++;
+                    quizHTML = `
+                        <div class="active-quiz">
+                            <div class="quiz-title"><i class="fa-solid fa-bolt"></i> QUIZ LIVE NOW</div>
+                            <div class="timer-box" id="timer-${index}">10:00</div>
+                            <button class="btn-start-quiz" onclick="enterQuiz('${course.title}')">START ATTEMPT</button>
+                        </div>
+                    `;
+                    // Start Timer for this quiz
+                    startTimer(course.quizTime, `timer-${index}`);
+                } else {
+                    quizHTML = `<div class="no-quiz">No active assessments</div>`;
+                }
+
+                // Build Card
+                const card = document.createElement('div');
+                card.className = 'course-card';
+                card.innerHTML = `
+                    <div class="course-header">
+                        <span class="course-code">${course.code}</span>
+                        <h3 class="course-title">${course.title}</h3>
+                        <div class="prof-name"><i class="fa-solid fa-user-tie"></i> ${course.prof}</div>
+                    </div>
+                    <div class="course-body">
+                        <div class="material-section">
+                            <div class="material-title">LATEST MATERIALS</div>
+                            ${materialsHTML}
+                        </div>
+                    </div>
+                    <div class="quiz-zone">
+                        ${quizHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Activate Notification if there are quizzes
+            if(activeQuizCount > 0) {
+                notifDot.classList.add('active');
+                // Simulate Email Notification Logic (Console Log)
+                console.log(`[System Email Sent]: Dear Student, you have ${activeQuizCount} active quiz(zes). Please login immediately.`);
+            }
+        }
+
+        // 2. Timer Logic
+        function startTimer(duration, elementId) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                const display = document.getElementById(elementId);
+                if(display) {
+                    display.textContent = minutes + ":" + seconds;
+                }
+
+                if (--timer < 0) {
+                    timer = 0;
+                    // Handle quiz expiry here
+                }
+            }, 1000);
+        }
+
+        // 3. Quiz Entry Logic
+        function enterQuiz(subject) {
+            alert("Entering Secure Environment for: " + subject + "\n\n(This would redirect to the Exam System)");
+        }
+
+        // Run on load
+        window.addEventListener('load', renderCourses);
+
+    </script>
+</body>
+</html>
